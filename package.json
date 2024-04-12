@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "duckdb": "^0.10.1",
+    "express": "^4.19.2"
+  }
+}
