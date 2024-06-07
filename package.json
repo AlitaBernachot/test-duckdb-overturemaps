@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
     "duckdb": "^0.10.1",
     "express": "^4.19.2"
   }
