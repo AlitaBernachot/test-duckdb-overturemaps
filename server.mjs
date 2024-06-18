@@ -118,4 +118,33 @@ app.get('/places', async (req, res) => {
   res.send(data);
 });
 
+/**
+ * Places points http://localhost:3000/base_land_cover
+ * WARNING this query takes 5min to execute, better execute and create the file in cache on duckdb standalone before
+ * thus adding LIMIT 10000 to the query
+ */
+app.get('/base_land_cover', async (req, res) => {
+  const fileName = getFileName('base_land_cover_1000.geojson');
+  const query = `
+    SELECT
+      id,
+      sources[1].dataset AS primary_source,
+      subtype,
+      ST_GeomFromWkb(geometry) AS geometry
+    FROM 
+      read_parquet('s3://overturemaps-us-west-2/release/2024-06-13-beta.0/theme=base/type=land_cover/*', filename=true, hive_partitioning=1) places
+    WHERE 
+      ST_Within(
+        ST_GeomFromWKB(geometry), 
+        ST_GeomFromGeoJSON('{"type":"Polygon","coordinates":  [[[54.4, 24.3],[54.8, 24.3],[54.8, 24.5],[54.4, 24.5],[54.4, 24.3]]]}')
+      )
+    /*ORDER BY RANDOM()*/
+    LIMIT 100
+  `;
+
+  const data = await doRequest(query, fileName);
+  res.setHeader('content-type', 'application/geo+json');
+  res.send(data);
+});
+
 app.listen(APP_PORT, () => console.log(`Server is running on port ${APP_PORT}`));
