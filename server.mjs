@@ -79,9 +79,7 @@ app.get('/places', async (req, res) => {
     WHERE 
     	ST_Within(
 	    	ST_GeomFromWKB(geometry), 
-	    	ST_GeomFromGeoJSON('{"type":"Polygon","coordinates":
-          [[[54.4, 24.3],[54.8, 24.3],[54.8, 24.5],[54.4, 24.5],[54.4, 24.3]]]
-        }')
+	    	ST_GeomFromGeoJSON('{"type":"Polygon","coordinates": [[[54.296494, 24.554306],[54.692001, 24.554306],[54.692001, 24.333959],[54.296494, 24.333959],[54.296494, 24.554306]]]}')
     	)
     LIMIT 10000
   `;
@@ -124,7 +122,7 @@ app.get('/places', async (req, res) => {
  * thus adding LIMIT 10000 to the query
  */
 app.get('/base_land_cover', async (req, res) => {
-  const fileName = getFileName('base_land_cover_1000.geojson');
+  const fileName = getFileName('base_land_cover.geojson');
   const query = `
     SELECT
       id,
@@ -136,10 +134,10 @@ app.get('/base_land_cover', async (req, res) => {
     WHERE 
       ST_Within(
         ST_GeomFromWKB(geometry), 
-        ST_GeomFromGeoJSON('{"type":"Polygon","coordinates":  [[[54.4, 24.3],[54.8, 24.3],[54.8, 24.5],[54.4, 24.5],[54.4, 24.3]]]}')
+        ST_GeomFromGeoJSON('{"type":"Polygon","coordinates": [[[54.296494, 24.554306],[54.692001, 24.554306],[54.692001, 24.333959],[54.296494, 24.333959],[54.296494, 24.554306]]]}')
       )
     /*ORDER BY RANDOM()*/
-    LIMIT 100
+    LIMIT 5000
   `;
 
   const data = await doRequest(query, fileName);
